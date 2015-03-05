@@ -10,26 +10,26 @@ module.exports = function(options) {
 		// second: reactEntry("second")
 	};
 	var loaders = {
-		"coffee": "coffee-redux-loader",
+		//"coffee": "coffee-redux-loader",
 		"jsx": options.hotComponents ? ["react-hot-loader", "jsx-loader?harmony"] : "jsx-loader?harmony",
 		"json": "json-loader",
-		// "js": {
-			// loader: "6to5-loader",
-			// include: path.join(__dirname, "app")
-		// },
+	  "js": {
+		 	loader: "babel-loader",
+		 	include: path.join(__dirname, "app")
+		 },
 		"json5": "json5-loader",
 		"txt": "raw-loader",
 		"png|jpg|jpeg|gif|svg": "url-loader?limit=10000",
-		"woff|woff2": "url-loader?limit=100000",
-		"ttf|eot": "file-loader",
-		"wav|mp3": "file-loader",
+		// "woff|woff2": "url-loader?limit=100000",
+		// "ttf|eot": "file-loader",
+		// "wav|mp3": "file-loader",
 		"html": "html-loader",
 		"md|markdown": ["html-loader", "markdown-loader"]
 	};
 	var stylesheetLoaders = {
 		"css": "css-loader",
-		"less": "css-loader!less-loader",
-		"styl": "css-loader!stylus-loader",
+		// "less": "css-loader!less-loader",
+		// "styl": "css-loader!stylus-loader",
 		"scss|sass": "css-loader!sass-loader"
 	};
 	var additionalLoaders = [
@@ -60,8 +60,7 @@ module.exports = function(options) {
 		pathinfo: options.debug
 	};
 	var excludeFromStats = [
-		/node_modules[\\\/]react(-router)?[\\\/]/,
-		/node_modules[\\\/]items-store[\\\/]/
+		/node_modules[\\\/]react(-router)?[\\\/]/
 	];
 	var plugins = [
 		function() {
@@ -82,10 +81,11 @@ module.exports = function(options) {
 	if(options.prerender) {
 		aliasLoader["react-proxy$"] = "react-proxy/unavailable";
 		externals.push(
-			/^react(\/.*)?$/,
-			/^reflux(\/.*)?$/,
-			"superagent",
-			"async"
+			/^react(\/.*)?$/
+			// /^react(\/.*)?$/,
+			// /^reflux(\/.*)?$/,
+			// "superagent",
+			// "async"
 		);
 		plugins.push(new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 }));
 	}

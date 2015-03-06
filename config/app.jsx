@@ -1,49 +1,51 @@
-//var async = require("async");
 var React = require("react");
 var Router = require("react-router");
-// var routes = require("../app/" + __resourceQuery.substr(1) + "Routes");
-// var stores = require("../app/" + __resourceQuery.substr(1) + "Stores");
-//var withTimeout = require("./withTimeout");
-//var ReactUpdates = require("react/lib/ReactUpdates");
-var routes = require('../app/routes')
+var Route = Router.Route;
+var Link = Router.Link;
+var DefaultRoute = Router.DefaultRoute;
+var RouteHandler = Router.RouteHandler;
 
-//var initialRun = true;
+
+var App = React.createClass({
+  render() {
+    return (
+      <div>
+        <RouteHandler/>
+      </div>
+    );
+  }
+});
+
+var MainView = React.createClass({
+  render() {
+    return (
+      <div>
+				<Link to="another-view">Another View</Link>
+        <div>Main View</div>
+      </div>
+    );
+  }
+});
+
+var AnotherView = React.createClass({
+  render() {
+    return (
+      <div>
+				<Link to="app">Main View</Link>
+				<div>Another View</div>
+      </div>
+    );
+  }
+});
+
+routes = (
+  <Route name="app" path="/" handler={App}>
+		<Route name="another-view" handler={AnotherView}/>
+		<DefaultRoute handler={MainView}/>
+	</Route>
+);
 
 // react-router handles location
-Router.run(routes, Router.HistoryLocation, function(Application, state) {
-
-	// // On every page navigation invalidate data from the stores
-	// // This is not needed when the server notifies the client about changes (WebSocket, SSE)
-	// if(!initialRun) {
-	// 	Object.keys(stores).forEach(function(key) {
-	// 		stores[key].outdate();
-	// 	});
-	// }
-	// initialRun = false;
-	//
-	// ReactUpdates.batchedUpdates(function() {
-	// 	stores.Router.setItemData("transition", state);
-	// });
-
-	// // try to fetch data for a defined timespan
-	// // when the data is not fully fetched after the timeout components are rendered (with missing/old data)
-	// withTimeout(async.forEach.bind(async, state.routes, function(route, callback) {
-	// 	if(route.handler.chargeStores) {
-	// 		route.handler.chargeStores(stores, state.params, callback);
-	// 	} else {
-	// 		callback();
-	// 	}
-	// }), 600, function() {
-	//
-	// 	ReactUpdates.batchedUpdates(function() {
-	// 		stores.Router.setItemData("transition", null);
-	// 	});
-	//
-	// 	// Render the components with the stores
-	// 	React.withContext({
-	// 		stores: stores
-	// 	}, function() {
-	// 		React.render(<Application />, document.getElementById("content"));
-	// 	});
-	// });
+Router.run(routes, function(Handler, state) {
+	React.render(<Handler />, document.getElementById('content'));
 });

@@ -3,6 +3,8 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var loadersByExtension = require("./config/loadersByExtension");
 var joinEntry = require("./config/joinEntry");
+var ReactMixinTransformer = require('react-mixin-transformer');
+
 
 module.exports = function(options) {
 	var entry = {
@@ -11,7 +13,7 @@ module.exports = function(options) {
 	};
 	var loaders = {
 		//"coffee": "coffee-redux-loader",
-		"jsx": options.hotComponents ? ["react-hot-loader", "jsx-loader?harmony"] : "jsx-loader?harmony",
+		"jsx": options.hotComponents ? ["react-hot-loader", "esprima!react-hot!babel-loader?experimental&optional=runtime"] : "esprima!babel-loader?experimental&optional=runtime",
 		"json": "json-loader",
 	  "js": {
 		 	loader: "babel-loader",
@@ -76,7 +78,12 @@ module.exports = function(options) {
 			}
 		},
 		new webpack.PrefetchPlugin("react"),
-		new webpack.PrefetchPlugin("react/lib/ReactComponentBrowserEnvironment")
+		new webpack.PrefetchPlugin("react/lib/ReactComponentBrowserEnvironment"),
+
+		//TODO debug only
+		new webpack.ProvidePlugin({
+			ReactDebuggerMixin: path.join(__dirname, './app/lib/debugMixin')
+		})
 	];
 	if(options.prerender) {
 		aliasLoader["react-proxy$"] = "react-proxy/unavailable";
@@ -149,6 +156,11 @@ module.exports = function(options) {
 			stats: {
 				exclude: excludeFromStats
 			}
+		},
+		esprima: {
+			transforms: [
+				ReactMixinTransformer.inject(['ReactDebuggerMixin'], true)
+			]
 		}
 	};
 };

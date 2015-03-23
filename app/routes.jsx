@@ -5,7 +5,7 @@ var Main = require('views/Home/Handler')
 var Another = require('views/Another/Handler')
 
 
-routes = (
+var routes = (
   <Route name="app" path="/" handler={App}>
 		<Route name="another-view" handler={Another}/>
 		<DefaultRoute handler={Main}/>
